@@ -3,13 +3,6 @@ AHP Task Prioritization (Streamlit + streamlit-tags)
 ---------------------------------------------------
 Run:
     streamlit run app_ahp_task_prioritization_tags.py
-
-Features
-- Criteria input via tags (streamlit-tags)
-- Pairwise comparisons using Saaty 1–9 with auto-reciprocals
-- Weights by Geometric Mean (default) or Principal Eigenvector
-- Consistency Ratio (CR) with RI (n<=10)
-- Task scoring with cost/benefit handling, ranking, CSV import/export
 """
 
 import numpy as np
@@ -90,21 +83,48 @@ with st.expander("2) Pairwise Comparison (Saaty 1–9 scale)", expanded=True):
     if n >= 2:
         A = np.ones((n, n), dtype=float)
 
+        # Presets to match the screenshot defaults
+        preset_pairs = {
+            ("Urgency", "Complexity"): ("Urgency", 2),
+            ("Urgency", "Impact"): ("Impact", 4),
+            ("Urgency", "Stakeholder Importance"): ("Stakeholder Importance", 2),
+            ("Complexity", "Impact"): ("Impact", 8),
+            ("Complexity", "Stakeholder Importance"): ("Stakeholder Importance", 4),
+            ("Impact", "Stakeholder Importance"): ("Impact", 4),
+        }
+        use_presets = criteria == ["Urgency", "Complexity", "Impact", "Stakeholder Importance"]
+
         cols = st.columns(min(4, n))
         pairs = [(i, j) for i in range(n) for j in range(i+1, n)]
         for idx, (i, j) in enumerate(pairs):
             with cols[idx % len(cols)]:
-                st.markdown(f"**{criteria[i]} vs {criteria[j]}**")
+                ci, cj = criteria[i], criteria[j]
+                st.markdown(f"**{ci} vs {cj}**")
+
+                # Default selection & magnitude
+                if use_presets and (ci, cj) in preset_pairs:
+                    preset_dir, preset_mag = preset_pairs[(ci, cj)]
+                    default_index = 0 if preset_dir == ci else 1
+                    default_mag = int(preset_mag)
+                else:
+                    default_index = 0   # choose left by default
+                    default_mag = 3     # moderate importance
+
                 direction = st.radio(
                     "Which is more important?",
-                    (criteria[i], criteria[j]),
+                    (ci, cj),
                     key=f"dir_{i}_{j}",
                     horizontal=True,
+                    index=default_index,
                 )
-                mag = st.slider("How much more important? (1–9)", 1, 9, 3, key=f"mag_{i}_{j}")
+                mag = st.slider(
+                    "How much more important? (1–9)",
+                    1, 9, default_mag,
+                    key=f"mag_{i}_{j}",
+                )
                 st.caption(saaty_label(mag))
 
-                if direction == criteria[i]:
+                if direction == ci:
                     A[i, j] = float(mag)
                     A[j, i] = 1.0 / float(mag)
                 else:
