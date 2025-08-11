@@ -185,7 +185,7 @@ with st.expander("3) Task Scoring & Ranking", expanded=True):
         ]
         for r in sample_rows:
             for c in criteria:
-                r[c] = 5
+                r[c] = int(np.random.randint(1, 6))
 
         start_mode = st.radio("Start with sample tasks?", ["Yes (sample)", "No (empty)"], horizontal=True)
         if start_mode.startswith("Yes"):
