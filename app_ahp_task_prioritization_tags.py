@@ -178,10 +178,10 @@ with st.expander("3) Task Scoring & Ranking", expanded=True):
 
         # Sample tasks
         sample_rows = [
-            {"Task Name": "Fix ETL Failure"},
-            {"Task Name": "AB Test Analysis"},
-            {"Task Name": "Build Marketing Dashboard"},
-            {"Task Name": "Data Quality Audit"},
+            {"Task Name": "Fix transform BS v3 - spend ASA"},
+            {"Task Name": "Create slide AHP"},
+            {"Task Name": "iOS QR Code - Check bhv user after PO config renewal price that increse"},
+            {"Task Name": "Setup Google search ads web to app"},
         ]
         for r in sample_rows:
             for c in criteria:
