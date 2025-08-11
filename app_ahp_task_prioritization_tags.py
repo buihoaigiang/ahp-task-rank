@@ -168,6 +168,20 @@ with st.expander("2) Pairwise Comparison (Saaty 1–9 scale)", expanded=True):
             file_name="ahp_criteria_weights.csv",
             mime="text/csv",
         )
+# ---- NEW: show Pairwise Matrix (from current config) ----
+matrix_df = pd.DataFrame(A, index=criteria, columns=criteria)
+matrix_df = matrix_df.round(4)
+matrix_df.index.name = "Criteria"   # hiện cột đầu là "Criteria"
+
+st.subheader("Pairwise Matrix (A)")
+st.dataframe(matrix_df, use_container_width=True)
+
+st.download_button(
+    "Download Pairwise Matrix (CSV)",
+    data=matrix_df.reset_index().to_csv(index=False),
+    file_name="ahp_pairwise_matrix.csv",
+    mime="text/csv",
+)
 
 # ---------- 3) Task Scoring & Ranking ----------
 with st.expander("3) Task Scoring & Ranking", expanded=True):
